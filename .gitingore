@@ -1,4 +1,4 @@
 .DS_Store
 .idea
 
-week05/node_modules/
+/week05/node_modules/

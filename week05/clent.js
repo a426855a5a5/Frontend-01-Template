@@ -1,4 +1,5 @@
 const net = require('net');
+const parser = require('./parser.js')
 
 class Requset {
     // methhod, url = host + port + path
@@ -19,7 +20,6 @@ class Requset {
             this.bodyText = JSON.stringify(this.body);
         else if (this.headers["Content-Type"] === 'application/x-www-form-urlencoded')
             this.bodyText = Object.keys(this.body).map(key => `${key}=${encodeURIComponent(this.body[key])}`).join('&');
-
         this.headers["Content-Length"] = this.bodyText.length;
     }
 
@@ -49,8 +49,6 @@ ${this.bodyText}`
                 if (parser.isFnishes) {
                     resolve(parser.response)
                 }
-                console.log(parser.headers, 2121)
-                // resolve(data.toString());
                 connection.end();
             });
             connection.on('error', (err) => {
@@ -169,6 +167,7 @@ class TrunkedParser {
     }
     receiveChar(char) {
         if (this.current === this.WAITING_LENGTH) {
+
             if (char === '\r') {
                 if (this.length === 0) {
                     this.isFnishes = true;
@@ -176,8 +175,8 @@ class TrunkedParser {
                 this.current = this.WAITING_LENGTH_LINE_END;
             } else {
 
-                this.length *= 10;
-                this.length += char.charCodeAt(0) - '0'.charCodeAt(0);
+                this.length *= 16;
+                this.length += parseInt(char, 16);
             }
 
         } else if (this.current === this.WAITING_LENGTH_LINE_END) {
@@ -186,7 +185,13 @@ class TrunkedParser {
             }
         } else if (this.current === this.READING_TRUNK) {
             this.content.push(char);
-            this.length--;
+            var pattern = new RegExp("[\u4E00-\u9FA5]+");
+            if (pattern.test(char)) {
+                this.length = this.length - 3;
+            } else {
+                this.length--;
+            }
+
 
             if (this.length === 0) {
                 this.current = this.WAITING_NEW_LINE;
@@ -218,7 +223,7 @@ void async function () {
     })
 
     let response = await requset.send();
-    console.log(response);
+    let dom = parser.parseHTML(response.body)
 }();
 
 /* const client = net.createConnection({

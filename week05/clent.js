@@ -1,5 +1,7 @@
 const net = require('net');
 const parser = require('./parser.js')
+const images = require('images')
+const render = require('./render.js')
 
 class Requset {
     // methhod, url = host + port + path
@@ -223,7 +225,15 @@ void async function () {
     })
 
     let response = await requset.send();
-    let dom = parser.parseHTML(response.body)
+    let dom = parser.parseHTML(response.body);
+    console.log(dom, '---->')
+    // console.log(dom, '---->', dom.children[0].children[3].children[1].children[3]);
+
+    let viewport = images(800, 600);
+
+    render(viewport, dom);
+
+    viewport.save("viewportss.jpg");
 }();
 
 /* const client = net.createConnection({

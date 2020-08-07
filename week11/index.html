@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<style>
+    div {
+        background-color: grey;
+        display: inline-block;
+        margin: 30px;
+        width: 100px;
+        height: 100px;
+        border-radius: 50px;
+    }
+
+    .green.light {
+        background-color: green;
+    }
+
+    .yello.light {
+        background-color: yellow;
+    }
+
+    .red.light {
+        background-color: red;
+    }
+</style>
+
+<body>
+    <div class="green"></div>
+    <div class="yello"></div>
+    <div class="red"></div>
+    <button id="next">next</button>
+</body>
+<script>
+    // 绿灯亮10秒，黄灯亮2面，红灯亮5秒的顺序
+    function green() {
+        var lights = document.getElementsByTagName("div");
+        for (let i = 0; i < 3; i++)
+            lights[i].classList.remove('light');
+        document.getElementsByClassName("green")[0].classList.add("light")
+
+    }
+    function yello() {
+        var lights = document.getElementsByTagName("div");
+        for (let i = 0; i < 3; i++)
+            lights[i].classList.remove('light');
+        document.getElementsByClassName("yello")[0].classList.add("light")
+
+    }
+    function red() {
+        var lights = document.getElementsByTagName("div");
+        for (let i = 0; i < 3; i++)
+            lights[i].classList.remove('light');
+        document.getElementsByClassName("red")[0].classList.add("light")
+
+    }
+
+    // 栈必须函数调用，for while根本不在栈上执行，所以不会溢出。
+
+    // function sleep(t) {
+    //     return new Promise((resolve, reject) => {
+    //         setTimeout(resolve, t)
+    //     })
+    // }
+    // async function* gss() {
+    //     let i = 0;
+    //     while (true) {
+    //         await sleep(1000);
+    //         yield i++;
+    //     }
+    // }
+
+    // for await (let v of gss()) {
+    //     console.log(v);
+    // }
+    // generator
+    // function* g() {
+    //     yield 1;
+    //     yield 2;
+    //     yield 3;
+    // }
+    // for (let v of g()) { // 不在浏览器内运行，会报错！！！
+    //     console.log(v);
+    // }
+
+
+
+    // Promise
+
+
+    // function* g() {
+    //     while (true) {
+    //         green();
+    //         yield sleep(1000);
+    //         yello()
+    //         yield sleep(200);
+    //         red()
+    //         yield sleep(500);
+    //     }
+    // }
+
+    // function run(itreator) {
+    //     let { value, done } = itreator.next();
+    //     if (done) return;
+    //     if (value instanceof Promise) {
+    //         value.then(() => {
+    //             run(itreator);
+    //         })
+    //     }
+    // }
+
+    // function co(generator) {
+    //     return function () {
+    //         return run(generator())
+    //     }
+    // }
+
+    // var go = co(g);
+
+    // function happen(element, evenName) {
+    //     return new Promise((resolve, reject) => {
+    //         element.addEventListener(evenName, resolve, { once: true }) // 只监听一次
+    //     })
+    // }
+
+    // async function go() {
+    //     while (true) {
+    //         green();
+    //         await happen(document.getElementById('next'), 'click');
+    //         yello()
+    //         await happen(document.getElementById('next'), 'click');
+    //         red()
+    //         await happen(document.getElementById('next'), 'click');
+    //     }
+    // }
+
+    // function go() {
+    //     green()
+    //     sleep(1000).then(() => {
+    //         yello();
+    //         return sleep(200)
+    //     }).then(() => {
+    //         red();
+    //         return sleep(500)
+    //     }).then(go)
+    // }
+
+
+    // 回调地狱
+    // function go() {
+    //     green()
+    //     setTimeout(function () {
+    //         yello()
+    //         setTimeout(function () {
+    //             red()
+    //             setTimeout(function () {
+    //                 go()
+    //             }, 5000)
+    //         }, 2000)
+    //     }, 10000);
+    // }
+
+    // 上古时代
+    // function go() {
+    //     green()
+
+    //     setTimeout(yello, 1000);
+    //     setTimeout(red, 1200);
+    //     setTimeout(go, 1700);
+    // }
+</script>
+
+</html>

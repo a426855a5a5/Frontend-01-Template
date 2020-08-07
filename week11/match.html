@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<style>
+    .keywords {
+        color: blue
+    }
+
+    .whitespace {
+        /* color: blueviolet */
+    }
+
+    .indentifier {
+        color: skyblue
+    }
+
+    .punctuator {
+        color: blueviolet
+    }
+</style>
+
+<body>
+    <pre id="container">
+
+</pre>
+</body>
+<script>
+    var a = "[a=value]".match(/\[([^=]+)=([^\]]+)\]/);
+    var b = "[a=value]".match(/\[(?:[^=]+)=(?:[^\]]+)\]/); // 取消捕获
+    console.log(a);
+    console.log(b);
+
+    "abc".replace(/a(b)c/, function (srt, $1) {
+        console.log(srt, $1);
+    })
+    var c = "abc".replace(/a(b)c/, "$$1$1")
+    console.log(c);
+    // exec iastIndex 正则真正的用法。
+    var source = `
+    function sleep(t) {
+        return new Promise((resolve, reject) => {
+            setTimeout(resolve, t)
+        })
+    }
+`
+    var regexp = /(function|new|return)|([ \t\n\r]+)|([a-zA-Z][a-zA-Z0-9]*)|([\(\)\{\}\,\;])/g
+    var d = regexp.exec(source);
+    var dictionary = ["keywords", "whitespace", "indentifier", "punctuator"];
+    var token = null;
+    var lastIndex = 0;
+    var container = document.getElementById("container");
+    do {
+        lastIndex = regexp.lastIndex;
+        token = regexp.exec(source);
+        if (!token) break;
+        let text = document.createElement("span");
+        text.textContent = token[0];
+
+
+        console.log(regexp.lastIndex);
+        for (var i = 1; i < 5; i++) {
+            if (token[i]) {
+                text.classList.add(dictionary[i - 1])
+                console.log(dictionary[i - 1], token[0]);
+            }
+
+        }
+        container.appendChild(text);
+    } while (token);
+    // console.log(d);
+</script>
+
+</html>

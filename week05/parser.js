@@ -1,5 +1,6 @@
 // const addCSS = require('./addCSSRules.js')
 const css = require('css');
+const layout = require('./layout.js');
 
 let currentToken = null;
 let currentAttribute = null;
@@ -15,7 +16,7 @@ let currentTextNode = null;
 let rules = [];
 function addCSSRules(text) {
     var ast = css.parse(text);
-    console.log(JSON.stringify(ast, null, "     "))
+    // console.log(JSON.stringify(ast, null, "     "))
     rules.push(...ast.stylesheet.rules);
 }
 
@@ -104,7 +105,8 @@ function computeCSS(element) {
             matched = true;
 
         if (matched) {
-            var sp = specificity(rule.selector[0]);
+
+            var sp = specificity(rule.selectors[0]);
             var computedStyle = element.computedStyle;
             for (var declaration of rule.declarations) {
                 if (!computedStyle[declaration.property])
@@ -161,6 +163,7 @@ function emit(token) {
             if (top.tagName == 'style') {
                 addCSSRules(top.children[0].content);
             }
+            layout(top); // 处理
             stack.pop();
         }
         currentTextNode = null;
@@ -393,37 +396,7 @@ function afterAttributeName(c) {
     }
 }
 
-function parseHTML(html) {
-    let state = data;
-
-    for (let c of html) {
-        state = state(c);
-    }
-    state = state(EOF);
-}
-
-parseHTML(`<html maaa=a >
-<head>
-    <style>
-body div #myid{
-    width:100px;
-    background-color: #ff5000;
-}
-body div img{
-    width:30px;
-    background-color: #ff1111;
-}
-    </style>
-</head>
-<body>
-    <div>
-        <img id="myid"/>
-        <img />
-    </div>
-</body>
-</html>`)
-
-// module.exports.parseHTML = function parseHTML(html) {
+// function parseHTML(html) {
 //     let state = data;
 
 //     for (let c of html) {
@@ -431,3 +404,41 @@ body div img{
 //     }
 //     state = state(EOF);
 // }
+
+// parseHTML(`<html maaa=a >
+// <head>
+//     <style>
+// #container {
+//     width:500px;
+//     height: 300px;
+//     display:flex;
+//     background-color:rgb(255, 0, 255);
+// }    
+// #container .c1 {
+//     width: 200px;
+//     height: 100px;
+//     background-color:rgb(255,0,0);
+// }
+// #container .c1 {
+//     flex:1;
+//     background-color:rgb(0,255,0);
+// }
+//     </style>
+// </head>
+// <body>
+//     <div id="container">
+//         <div id="myid"></div>
+//         <div class="c1"></div>
+//     </div>
+// </body>
+// </html>`)
+
+module.exports.parseHTML = function parseHTML(html) {
+    let state = data;
+
+    for (let c of html) {
+        state = state(c);
+    }
+    state = state(EOF);
+    return stack[0];
+}

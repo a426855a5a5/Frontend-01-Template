@@ -1,4 +1,6 @@
 .DS_Store
 .idea
 
+node_modules/
 /week05/node_modules/
+/week14/COMPINENT/node_modules/

@@ -233,6 +233,158 @@ function endTagOpen(c) {
     }
 }
 
+// 组件化添加逻辑 
+function scritptData(c) {
+    // console.log("script data !!!!!!")
+    if(c == "<"){
+        return scritptDataLessThanSign;
+    }else{
+        emit({
+            type: "text",
+            content: c
+        })
+        return scritptData;
+    }
+}
+// in script received <
+function scritptDataLessThanSign(c) {
+    if(c == "/"){
+        return scritptDataEndTagOpen;
+    }else{
+        emit({
+            type: "text",
+            content: "<"
+        })
+        emit({
+            type: "text",
+            content: c
+        })
+        return scritptData;
+    }
+}
+// in script received </
+function scritptDataEndTagOpen(c) {
+    if(c == "s"){
+        return scritptDataEndTagNameS;
+    }else{
+        emit({
+            type: "text",
+            content: "<"
+        })
+        emit({
+            type: "text",
+            content: "/"
+        })
+        emit({
+            type: "text",
+            content: c
+        })
+        return scritptData;
+    }
+}
+// in script received </s
+function scritptDataEndTagNameS(c) {
+    if(c == "c"){
+        return scritptDataEndTagNameC;
+    }else{
+        emit({
+            type: "text",
+            content: "</s"
+        })
+        emit({
+            type: "text",
+            content: c
+        })
+        return scritptData;
+    }
+}
+// in script received </sc
+function scritptDataEndTagNameC(c) {
+    if(c == "r"){
+        return scritptDataEndTagNameR;
+    }else{
+        emit({
+            type: "text",
+            content: "</sc"
+        })
+        emit({
+            type: "text",
+            content: c
+        })
+        return scritptData;
+    }
+}
+// in script received </scr
+function scritptDataEndTagNameR(c) {
+    if(c == "i"){
+        return scritptDataEndTagNameI;
+    }else{
+        emit({
+            type: "text",
+            content: "</scr"
+        })
+        emit({
+            type: "text",
+            content: c
+        })
+        return scritptData;
+    }
+}
+// in script received </scri
+function scritptDataEndTagNameI(c) {
+    if(c == "p"){
+        return scritptDataEndTagNameP;
+    }else{
+        emit({
+            type: "text",
+            content: "</scri"
+        })
+        emit({
+            type: "text",
+            content: c
+        })
+        return scritptData;
+    }
+}
+// in script received </scrip
+function scritptDataEndTagNameP(c) {
+    if(c == "t"){
+        return scritptDataEndTag;
+    }else{
+        emit({
+            type: "text",
+            content: "</scrip"
+        })
+        emit({
+            type: "text",
+            content: c
+        })
+        return scritptData;
+    }
+}
+// in script received </script
+function scritptDataEndTag(c) {
+    if(c == " "){
+        return scritptDataEndTag;
+    }else if (c == ">"){
+        emit({
+            type: "endTag",
+            tagName: "script"
+        })
+        return data;
+    }else{
+        emit({
+            type: "text",
+            content: "</script"
+        })
+        emit({
+            type: "text",
+            content: c
+        })
+        return scritptData;
+    }
+}
+
 function tagName(c) {
     if (c.match(/^[\t\n\f ]$/)) {
         return beforeAttributeName;
@@ -438,6 +590,9 @@ module.exports.parseHTML = function parseHTML(html) {
 
     for (let c of html) {
         state = state(c);
+        if(stack[stack.length - 1].tagName === "script" && state == data){
+            state = scritptData;
+        }
     }
     state = state(EOF);
     return stack[0];
